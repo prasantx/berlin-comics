@@ -1,6 +1,7 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { useAuth } from '../context/AuthContext';
+import { signInWithEmailAndPassword } from 'firebase/auth';
+import { auth } from '../config/firebase';
 import { Button } from './Button';
 import { Mail, Lock, AlertCircle, Loader2 } from 'lucide-react';
 
@@ -9,16 +10,7 @@ const Login = () => {
     const [password, setPassword] = useState('');
     const [error, setError] = useState('');
     const [loading, setLoading] = useState(false);
-
-    const { login, isAuthenticated, loading: authLoading } = useAuth();
     const navigate = useNavigate();
-
-    // Redirect if already authenticated
-    useEffect(() => {
-        if (!authLoading && isAuthenticated) {
-            navigate('/', { replace: true });
-        }
-    }, [isAuthenticated, authLoading, navigate]);
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -26,27 +18,15 @@ const Login = () => {
         setLoading(true);
 
         try {
-            await login(email, password);
+            await signInWithEmailAndPassword(auth, email, password);
             navigate('/');
         } catch (err: any) {
             console.error(err);
-            if (err.code === 'auth/wrong-password' || err.code === 'auth/user-not-found') {
-                setError('Invalid email or password');
-            } else {
-                setError('Failed to log in. Please check your credentials.');
-            }
+            setError('Failed to log in. Please check your credentials.');
+        } finally {
             setLoading(false);
         }
-        // Do not setLoading(false) on success as we navigate away
     };
-
-    if (authLoading) {
-        return (
-            <div className="min-h-[80vh] flex items-center justify-center">
-                <Loader2 className="w-8 h-8 animate-spin text-primary" />
-            </div>
-        );
-    }
 
     return (
         <div className="min-h-[80vh] flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">

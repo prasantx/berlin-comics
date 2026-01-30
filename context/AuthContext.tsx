@@ -6,20 +6,19 @@ import {
     onAuthStateChanged,
     User
 } from 'firebase/auth';
-import { doc, getDoc, setDoc, serverTimestamp } from 'firebase/firestore';
+import { doc, setDoc, getDoc, serverTimestamp } from 'firebase/firestore';
 import { auth, db } from '../config/firebase';
 
 interface AuthContextType {
-    user: User | null;
-    userData: any | null;
+    currentUser: User | null;
+    userData: any;
     loading: boolean;
-    isAuthenticated: boolean;
-    signup: (email: string, password: string, additionalData?: any) => Promise<any>;
-    login: (email: string, password: string) => Promise<any>;
+    signup: (email: string, password: string, additionalData?: any) => Promise<void>;
+    login: (email: string, password: string) => Promise<void>;
     logout: () => Promise<void>;
 }
 
-const AuthContext = createContext<AuthContextType | null>(null);
+const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export const useAuth = () => {
     const context = useContext(AuthContext);
@@ -29,24 +28,62 @@ export const useAuth = () => {
     return context;
 };
 
-export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
-    const [user, setUser] = useState<User | null>(null);
-    const [userData, setUserData] = useState<any | null>(null);
+export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+    const [currentUser, setCurrentUser] = useState<User | null>(null);
+    const [userData, setUserData] = useState<any>(null);
     const [loading, setLoading] = useState(true);
 
-    useEffect(() => {
-        const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
-            setUser(currentUser);
+    const signup = async (email: string, password: string, additionalData: any = {}) => {
+        try {
+            const userCredential = await createUserWithEmailAndPassword(auth, email, password);
 
-            if (currentUser) {
-                // Fetch user specific data from Firestore
+            // Create user document
+            try {
+                await setDoc(doc(db, 'users', userCredential.user.uid), {
+                    uid: userCredential.user.uid,
+                    email: email,
+                    createdAt: serverTimestamp(),
+                    updatedAt: serverTimestamp(),
+                    role: 'user', // Default role
+                    ...additionalData
+                });
+            } catch (firestoreError) {
+                console.error('Firestore error (non-blocking):', firestoreError);
+                // Don't throw here, user is already created in Auth
+            }
+        } catch (error) {
+            throw error;
+        }
+    };
+
+    const login = async (email: string, password: string) => {
+        return signInWithEmailAndPassword(auth, email, password);
+    };
+
+    const logout = () => {
+        return signOut(auth);
+    };
+
+    useEffect(() => {
+        const unsubscribe = onAuthStateChanged(auth, async (user) => {
+            setCurrentUser(user);
+
+            if (user) {
+                // Fetch user data from Firestore
                 try {
-                    const userDoc = await getDoc(doc(db, 'users', currentUser.uid));
-                    if (userDoc.exists()) {
-                        setUserData(userDoc.data());
+                    const docRef = doc(db, 'users', user.uid);
+                    const docSnap = await getDoc(docRef);
+
+                    if (docSnap.exists()) {
+                        setUserData(docSnap.data());
+                    } else {
+                        // If doc doesn't exist (e.g. created via other means), we might want to create it? 
+                        // For now just set null
+                        setUserData(null);
                     }
-                } catch (error) {
-                    console.error("Error fetching user data:", error);
+                } catch (err) {
+                    console.error("Error fetching user data:", err);
+                    setUserData(null);
                 }
             } else {
                 setUserData(null);
@@ -58,50 +95,17 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         return unsubscribe;
     }, []);
 
-    const signup = async (email: string, password: string, additionalData = {}) => {
-        try {
-            const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-
-            // Create user document in Firestore
-            try {
-                await setDoc(doc(db, 'users', userCredential.user.uid), {
-                    email: email,
-                    uid: userCredential.user.uid,
-                    createdAt: serverTimestamp(),
-                    updatedAt: serverTimestamp(),
-                    ...additionalData
-                });
-            } catch (firestoreError) {
-                console.error('Firestore error (non-blocking):', firestoreError);
-                // Don't throw - user is created in Auth, Firestore doc can be created later or by a trigger
-            }
-
-            return userCredential;
-        } catch (authError) {
-            throw authError;
-        }
-    };
-
-    const login = (email: string, password: string) => {
-        return signInWithEmailAndPassword(auth, email, password);
-    };
-
-    const logout = () => {
-        return signOut(auth);
-    };
-
     const value = {
-        user,
+        currentUser,
         userData,
         loading,
-        isAuthenticated: !!user,
         signup,
         login,
         logout
     };
 
     return (
-        <AuthContext.Provider value={value}>
+        <AuthContext.Provider value={value as any}>
             {!loading && children}
         </AuthContext.Provider>
     );

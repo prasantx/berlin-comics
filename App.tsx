@@ -15,8 +15,8 @@ import { AIChat } from './components/AIChat';
 const App = () => {
   return (
     <Router>
-      <AuthProvider>
-        <CartProvider>
+      <CartProvider>
+        <AuthProvider>
           <div className="min-h-screen bg-background text-foreground antialiased selection:bg-primary/30 selection:text-primary">
             <Header />
             <CartDrawer />
@@ -37,8 +37,8 @@ const App = () => {
             <Footer />
             <AIChat />
           </div>
-        </CartProvider>
-      </AuthProvider>
+        </AuthProvider>
+      </CartProvider>
     </Router>
   );
 };

@@ -1,6 +1,5 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { updateProfile } from 'firebase/auth';
 import { useAuth } from '../context/AuthContext';
 import { Button } from './Button';
 import { Mail, Lock, User, AlertCircle, Loader2 } from 'lucide-react';
@@ -12,48 +11,43 @@ const Signup = () => {
     const [confirmPassword, setConfirmPassword] = useState('');
     const [error, setError] = useState('');
     const [loading, setLoading] = useState(false);
-
-    const { signup, isAuthenticated, loading: authLoading } = useAuth();
     const navigate = useNavigate();
 
+    // Use AuthContext
+    const { signup, currentUser, loading: authLoading } = useAuth();
+
     // Redirect if already authenticated
-    useEffect(() => {
-        if (!authLoading && isAuthenticated) {
+    React.useEffect(() => {
+        if (!authLoading && currentUser) {
             navigate('/', { replace: true });
         }
-    }, [isAuthenticated, authLoading, navigate]);
+    }, [currentUser, authLoading, navigate]);
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         setError('');
-        setLoading(true);
 
+        // Validation
         if (password !== confirmPassword) {
-            setLoading(false);
             setError('Passwords do not match');
             return;
         }
 
         if (password.length < 6) {
-            setLoading(false);
             setError('Password must be at least 6 characters');
             return;
         }
 
+        setLoading(true);
+
         try {
-            // Signup with Firebase Auth and create Firestore doc
-            const userCredential = await signup(email, password, { name });
-
-            // Update display name in Auth
-            if (userCredential && userCredential.user) {
-                await updateProfile(userCredential.user, {
-                    displayName: name
-                });
-            }
-
+            await signup(email, password, { displayName: name });
+            // Navigation handled by auth listener or we can explicit navigate
             navigate('/', { replace: true });
         } catch (err: any) {
-            console.error('Signup error:', err);
+            console.error(err);
+            setLoading(false); // Only stop loading on error, success unmounts or redirects
+
             if (err.code === 'auth/email-already-in-use') {
                 setError('Email is already in use');
             } else if (err.code === 'auth/invalid-email') {
@@ -63,17 +57,21 @@ const Signup = () => {
             } else {
                 setError('Failed to create an account. Please try again.');
             }
-            setLoading(false);
         }
-        // Do not setLoading(false) on success as we navigate away
     };
 
+    // Show loading while checking auth state
     if (authLoading) {
         return (
             <div className="min-h-[80vh] flex items-center justify-center">
                 <Loader2 className="w-8 h-8 animate-spin text-primary" />
             </div>
         );
+    }
+
+    // If already authenticated (and not loading), we're redirecting, so return null or spinner
+    if (currentUser) {
+        return null;
     }
 
     return (
