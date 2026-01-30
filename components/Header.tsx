@@ -16,12 +16,11 @@ const Header = () => {
   }, []);
 
   return (
-    <header 
-      className={`sticky top-0 z-40 w-full transition-all duration-300 border-b ${
-        isScrolled 
-          ? 'bg-background/80 backdrop-blur-md border-border' 
+    <header
+      className={`sticky top-0 z-40 w-full transition-all duration-300 border-b ${isScrolled
+          ? 'bg-background/80 backdrop-blur-md border-border'
           : 'bg-transparent border-transparent'
-      }`}
+        }`}
     >
       <div className="container mx-auto px-4 h-20 flex items-center justify-between">
         {/* Mobile Menu */}
@@ -42,9 +41,9 @@ const Header = () => {
         {/* Desktop Nav */}
         <nav className="hidden md:flex items-center gap-8">
           {['New Arrivals', 'Manga', 'Comics', 'Merch', 'Sale'].map((item) => (
-            <Link 
-              key={item} 
-              to="/" 
+            <Link
+              key={item}
+              to="/"
               onClick={(e) => e.preventDefault()}
               className="text-sm font-medium text-muted-foreground hover:text-primary transition-colors relative group"
             >
@@ -59,12 +58,12 @@ const Header = () => {
           <button className="p-2 text-muted-foreground hover:text-foreground transition-colors hover:bg-muted/50 rounded-full">
             <Search className="w-5 h-5" />
           </button>
-          
-          <button className="p-2 text-muted-foreground hover:text-foreground transition-colors hover:bg-muted/50 rounded-full hidden sm:block">
-            <User className="w-5 h-5" />
-          </button>
 
-          <button 
+          <Link to="/login" className="p-2 text-muted-foreground hover:text-foreground transition-colors hover:bg-muted/50 rounded-full hidden sm:block">
+            <User className="w-5 h-5" />
+          </Link>
+
+          <button
             onClick={toggleCart}
             className="p-2 text-foreground hover:text-primary transition-colors relative group"
           >
