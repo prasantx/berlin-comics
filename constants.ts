@@ -1,0 +1,147 @@
+import { Comic } from './types';
+
+export const MOCK_INVENTORY: Comic[] = [
+  {
+    id: '1',
+    title: 'Berserk Deluxe Edition',
+    issueNumber: 'Vol. 1',
+    publisher: 'Dark Horse',
+    year: 2019,
+    price: 49.99,
+    condition: 'NEW',
+    description: 'The late Kentaro Miura\'s masterpiece in an oversized 7x10 hardcover. Contains the first three volumes of the Black Swordsman arc.',
+    staffNote: 'The definition of deadly. The art detail is terrifyingly beautiful.',
+    category: 'manga',
+    cover: 'https://m.media-amazon.com/images/I/9196T-P0QCL._AC_UF1000,1000_QL80_.jpg',
+    isStaffPick: true
+  },
+  {
+    id: '2',
+    title: 'Chainsaw Man: Box Set',
+    issueNumber: 'Vols 1-11',
+    publisher: 'Viz Media',
+    year: 2023,
+    price: 99.99,
+    condition: 'NEW',
+    description: 'Complete Public Safety Arc. Denji\'s bloody, chaotic journey with Pochita.',
+    staffNote: 'Visceral, loud, and heart-wrenching. A modern classic of violence.',
+    category: 'manga',
+    cover: 'https://m.media-amazon.com/images/I/81575812NLL._AC_UF1000,1000_QL80_.jpg',
+    isStaffPick: true
+  },
+  {
+    id: '3',
+    title: 'Uzumaki (3-in-1 Deluxe)',
+    issueNumber: 'Complete',
+    publisher: 'Viz Media',
+    year: 2013,
+    price: 27.99,
+    condition: 'NEW',
+    description: 'Junji Ito\'s legendary horror story about a town cursed by spirals.',
+    staffNote: 'Psychological horror at its peak. Not for the faint of heart.',
+    category: 'manga',
+    cover: 'https://m.media-amazon.com/images/I/91Ar5p3j+KL._AC_UF1000,1000_QL80_.jpg',
+    isStaffPick: false
+  },
+  {
+    id: '4',
+    title: 'Jujutsu Kaisen: King of Curses',
+    issueNumber: 'Key Visual Poster',
+    publisher: 'Mappa',
+    year: 2024,
+    price: 24.99,
+    condition: 'NEW',
+    description: 'High-gloss poster featuring Ryomen Sukuna on his throne of skulls.',
+    staffNote: 'The most watched villain of the year. The colors are menacing.',
+    category: 'poster',
+    cover: 'https://m.media-amazon.com/images/I/81sF-b2-VRL._AC_UF894,1000_QL80_.jpg',
+    isStaffPick: true
+  },
+  {
+    id: '5',
+    title: 'Tokyo Ghoul: Complete Box Set',
+    issueNumber: 'Vols 1-14',
+    publisher: 'Viz Media',
+    year: 2018,
+    price: 149.99,
+    condition: 'NM',
+    description: 'Ken Kaneki\'s tragic descent into the world of ghouls.',
+    category: 'manga',
+    cover: 'https://m.media-amazon.com/images/I/81X0j2Q9mCL._AC_UF1000,1000_QL80_.jpg',
+    isStaffPick: false
+  },
+  {
+    id: '6',
+    title: 'Attack on Titan: Colossal Edition',
+    issueNumber: 'Vol. 1',
+    publisher: 'Kodansha',
+    year: 2014,
+    price: 59.99,
+    condition: 'NEW',
+    description: 'Giant-sized printing of the series that redefined fear. Contains Vol 1-5.',
+    staffNote: 'See the Titans as they were meant to be seen: massive and terrifying.',
+    category: 'manga',
+    cover: 'https://m.media-amazon.com/images/I/81C6z6h+i1L._AC_UF1000,1000_QL80_.jpg',
+    isStaffPick: true
+  },
+  {
+    id: '7',
+    title: 'Hellsing Deluxe Edition',
+    issueNumber: 'Vol. 1',
+    publisher: 'Dark Horse',
+    year: 2020,
+    price: 49.99,
+    condition: 'NEW',
+    description: 'Kohta Hirano\'s blood-soaked vampire saga featuring Alucard.',
+    category: 'manga',
+    cover: 'https://m.media-amazon.com/images/I/81-0y-T0cML._AC_UF1000,1000_QL80_.jpg',
+    isStaffPick: false
+  },
+  {
+    id: '8',
+    title: 'Solo Leveling',
+    issueNumber: 'Comic Vol. 1',
+    publisher: 'Yen Press',
+    year: 2021,
+    price: 19.99,
+    condition: 'NEW',
+    description: 'The manhwa that took the world by storm. Sung Jinwoo\'s rise to power.',
+    staffNote: 'The art is incredibly sharp. Absolute power fantasy.',
+    category: 'manga',
+    cover: 'https://m.media-amazon.com/images/I/81x44y0B1ML._AC_UF1000,1000_QL80_.jpg',
+    isStaffPick: false
+  },
+  {
+    id: '9',
+    title: 'Demon Slayer: Corps Records',
+    issueNumber: 'Fan Book',
+    publisher: 'Viz Media',
+    year: 2021,
+    price: 14.99,
+    condition: 'NM',
+    description: 'Official fan book containing secrets of the Demon Slayer Corps.',
+    category: 'manga',
+    cover: 'https://m.media-amazon.com/images/I/910qHw+g04L._AC_UF1000,1000_QL80_.jpg',
+    isStaffPick: false
+  },
+  {
+    id: '10',
+    title: 'Chainsaw Man: Power & Denji',
+    issueNumber: 'Metallic Print',
+    publisher: 'Viz Media',
+    year: 2023,
+    price: 40.00,
+    condition: 'NEW',
+    description: 'Limited edition metallic print showing the bloody duo.',
+    category: 'poster',
+    cover: 'https://m.media-amazon.com/images/I/71wK80A6xPL._AC_SL1200_.jpg',
+    isStaffPick: false
+  }
+];
+
+export const NAV_LINKS = [
+  { label: 'Deadly Collections', value: 'all' },
+  { label: 'Horror', value: 'manga' },
+  { label: 'Key Visuals', value: 'poster' },
+  { label: 'Rare Sets', value: 'keys' },
+];
